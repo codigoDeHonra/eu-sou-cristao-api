@@ -1,0 +1,88 @@
+version: '3'
+services:
+  esc-nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    container_name: esc-nginx
+    working_dir: /app
+    volumes:
+      - .:/var/www/html
+      - .:/app
+    ports:
+      - "443:8443"
+    depends_on:
+      - "esc-php-fpm"
+      - "composer"
+    networks:
+      static-esc-network:
+        ipv4_address: 172.27.0.3
+
+  esc-php-fpm:
+    build:
+      context: .
+      dockerfile: docker/php-fpm/Dockerfile
+    container_name: esc-php-fpm
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+    networks:
+      static-esc-network:
+        ipv4_address: 172.27.0.2
+
+  mongo:
+    container_name: esc-mongo
+    build:
+      context: .
+      dockerfile: docker/mongo/Dockerfile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./data/db:/data/db
+    networks:
+      static-esc-network:
+        ipv4_address: 172.27.0.4
+
+  # Documentação da API altamente recomendado para desenvolvedores
+  # api-doc:
+  #   container_name: nfe-api-doc
+  #   image: quay.io/bukalapak/snowboard:v1.7.0
+  #   entrypoint:
+  #     - snowboard
+  #     - --watch
+  #     - --watch-interval
+  #     - 50ms
+  #     - html
+  #     - -o
+  #     - output.html
+  #     - -b
+  #     - 0.0.0.0:8088
+  #     - -s
+  #     - API_Specification.apib
+  #   ports:
+  #     - "8088:8088"
+  #   volumes:
+  #     - .:/doc
+
+  composer:
+    container_name: vendor
+    image: composer:1.7
+    working_dir: /app
+    entrypoint:
+      - composer
+      - install
+      - --ignore-platform-reqs
+      - --no-interaction
+      - --no-plugins
+      - --no-scripts
+      - --prefer-dist
+    volumes:
+      - .:/app
+
+networks:
+  static-esc-network:
+    ipam:
+      config:
+        - subnet: 172.27.0.0/24
