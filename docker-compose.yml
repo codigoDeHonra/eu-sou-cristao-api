@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   esc-nginx:
     build:
@@ -10,12 +10,13 @@ services:
       - .:/var/www/html
       - .:/app
     ports:
-      - "443:8443"
+      - "8443:8443"
+      - "8081:8081"
     depends_on:
       - "esc-php-fpm"
       - "composer"
     networks:
-      static-esc-network:
+      esc-network:
         ipv4_address: 172.27.0.3
 
   esc-php-fpm:
@@ -28,7 +29,7 @@ services:
       - .:/app
       - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
     networks:
-      static-esc-network:
+      esc-network:
         ipv4_address: 172.27.0.2
 
   mongo:
@@ -42,7 +43,7 @@ services:
     volumes:
       - ./data/db:/data/db
     networks:
-      static-esc-network:
+      esc-network:
         ipv4_address: 172.27.0.4
 
   # Documentação da API altamente recomendado para desenvolvedores
@@ -82,7 +83,8 @@ services:
       - .:/app
 
 networks:
-  static-esc-network:
+  esc-network:
+    name: esc-network
     ipam:
       config:
         - subnet: 172.27.0.0/24

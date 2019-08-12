@@ -12,5 +12,47 @@
 */
 
 $router->get('/', function () use ($router) {
+    $user = DB::collection('Discipulos');
+    dd($user);
     return $router->app->version();
 });
+
+$router->post(
+    '/discipulo',
+    [
+        'as' => 'store',
+        'uses' => '\App\Http\Controllers\DiscipuloController@store'
+    ]
+);
+
+$router->get(
+    '/discipulo/{id}',
+    [
+        'as' => 'show',
+        'uses' => '\App\Http\Controllers\DiscipuloController@show'
+    ]
+);
+
+$router->get(
+    '/discipulo',
+    [
+        'as' => 'index',
+        'uses' => '\App\Http\Controllers\DiscipuloController@index'
+    ]
+);
+
+$router->put(
+    '/discipulo/{id}',
+    [
+        'as' => 'index',
+        'uses' => '\App\Http\Controllers\DiscipuloController@update'
+    ]
+);
+
+$router->delete(
+    '/discipulo/{id}',
+    [
+        'as' => 'delete',
+        'uses' => '\App\Http\Controllers\DiscipuloController@delete'
+    ]
+);
