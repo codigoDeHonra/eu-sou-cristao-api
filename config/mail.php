@@ -133,6 +133,5 @@ return [
 
     'log_channel' => env('MAIL_LOG_CHANNEL'),
     'domain' => 'your-mailgun-domain',
-    'secret' => 'your-mailgun-key',
-
+    'secret' => env('MAILGUN_SECRET'),
 ];

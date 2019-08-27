@@ -1,2 +1,2 @@
-FROM mongo:4
+FROM mongo:latest
 CMD ["mongod"]
