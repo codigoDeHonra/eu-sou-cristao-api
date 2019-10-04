@@ -16,7 +16,9 @@ class DiscipuloController extends Controller
 
     public function index()
     {
-       return DiscipuloModel::all();
+       /* return DiscipuloModel::all(); */
+       $discipulo = DiscipuloModel::where('active', '=', 1)->get();
+       return $discipulo;
     }
 
     public function store(Request $request)
@@ -70,8 +72,12 @@ class DiscipuloController extends Controller
        return $discipulo;
     }
 
-    public function active(Request $request)
+    public function active(Request $request, $code)
     {
-       $discipulo = new DiscipuloModel();
+       $discipulo = DiscipuloModel::where('activeCode', '=', $code)->take(1)->get()[0];
+
+       $discipulo->active = 1;
+       $discipulo->save();
+       return $discipulo;
     }
 }

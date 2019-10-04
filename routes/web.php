@@ -50,9 +50,17 @@ $router->put(
 );
 
 $router->delete(
-    '/discipulo/{id}',
+    '/discipulo/{id}/active',
     [
         'as' => 'delete',
         'uses' => '\App\Http\Controllers\DiscipuloController@delete'
+    ]
+);
+
+$router->get(
+    '/discipulo/{code}/active',
+    [
+        'as' => 'active',
+        'uses' => '\App\Http\Controllers\DiscipuloController@active'
     ]
 );
