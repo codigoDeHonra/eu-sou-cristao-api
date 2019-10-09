@@ -33,6 +33,16 @@ class DiscipuloController extends Controller
        $discipulo->active = 0;
        $discipulo->activeCode = Crypt::encrypt(time());
 
+       $response = (new \ReCaptcha\ReCaptcha($secret))
+        ->setExpectedAction('contact_form')
+        ->verify($request->input('recaptcha'), $request->ip());
+
+       if (!$response->isSuccess()) {
+            abort();
+       }    if ($response->getScore() < 0.6) {
+          return response()->view('challenge');
+       }    return response()->view('success');
+
        $discipulo->save();
 
        $mail = new Test();
