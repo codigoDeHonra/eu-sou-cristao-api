@@ -33,15 +33,17 @@ class DiscipuloController extends Controller
        $discipulo->active = 0;
        $discipulo->activeCode = Crypt::encrypt(time());
 
+       $secret = RECAPCHA_SECRET;
        $response = (new \ReCaptcha\ReCaptcha($secret))
-        ->setExpectedAction('contact_form')
+        ->setExpectedAction('homepage')
         ->verify($request->input('recaptcha'), $request->ip());
 
        if (!$response->isSuccess()) {
-            abort();
-       }    if ($response->getScore() < 0.6) {
-          return response()->view('challenge');
-       }    return response()->view('success');
+           return $response;
+       }
+       if ($response->getScore() < 0.6) {
+           return ['error recaptcha'];
+       }
 
        $discipulo->save();
 
